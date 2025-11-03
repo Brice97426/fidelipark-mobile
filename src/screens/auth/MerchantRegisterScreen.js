@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import {
     View,
-    StyleSheet,
     ScrollView,
     KeyboardAvoidingView,
     Platform,
     Image,
+    StyleSheet,
 } from 'react-native';
 import {
     TextInput,
@@ -19,7 +19,9 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { commonStyles, colors } from './styles';
 
+// Schéma de validation
 const registerSchema = Yup.object().shape({
     nomCommerce: Yup.string()
         .min(2, 'Le nom du commerce doit contenir au moins 2 caractères')
@@ -64,23 +66,24 @@ const MerchantRegisterScreen = () => {
 
     return (
         <KeyboardAvoidingView
-            style={styles.container}
+            style={[commonStyles.container, styles.container]}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <ScrollView
-                contentContainerStyle={styles.scrollContent}
+                contentContainerStyle={commonStyles.scrollContent}
                 keyboardShouldPersistTaps="handled"
             >
-                <View style={styles.logoContainer}>
-                    <View style={styles.logoPlaceholder}>
-                        <Image source={require('../../assets/icons/icon.png')} style={styles.logoImage} />
-                    </View>
-                    <Text style={styles.welcomeText}>Bienvenue</Text>
-                    <Text style={styles.subtitle}>Inscription</Text>
-                    <Text style={styles.userType}>Espace Commerçant</Text>
+                <View style={commonStyles.logoContainer}>
+                        <Image
+                            source={require('../../assets/icons/icon.png')}
+                            style={commonStyles.logoImage}
+                        />
+                    <Text style={commonStyles.welcomeText}>Bienvenue</Text>
+                    <Text style={commonStyles.subtitle}>Inscription</Text>
+                    <Text style={commonStyles.userType}>Espace Commerçant</Text>
                 </View>
 
-                <Surface style={styles.formContainer} elevation={2}>
+                <Surface style={commonStyles.formContainer} elevation={2}>
                     <Formik
                         initialValues={{
                             nomCommerce: '',
@@ -103,6 +106,7 @@ const MerchantRegisterScreen = () => {
                             setFieldValue,
                         }) => (
                             <View>
+                                {/* Nom du commerce */}
                                 <TextInput
                                     label="Nom du commerce"
                                     mode="outlined"
@@ -110,7 +114,7 @@ const MerchantRegisterScreen = () => {
                                     onChangeText={handleChange('nomCommerce')}
                                     onBlur={handleBlur('nomCommerce')}
                                     error={touched.nomCommerce && errors.nomCommerce}
-                                    style={styles.input}
+                                    style={commonStyles.input}
                                     left={<TextInput.Icon icon="store" />}
                                 />
                                 {touched.nomCommerce && errors.nomCommerce && (
@@ -119,6 +123,7 @@ const MerchantRegisterScreen = () => {
                                     </HelperText>
                                 )}
 
+                                {/* Adresse du commerce */}
                                 <TextInput
                                     label="Adresse du commerce"
                                     mode="outlined"
@@ -126,7 +131,7 @@ const MerchantRegisterScreen = () => {
                                     onChangeText={handleChange('adresseCommerce')}
                                     onBlur={handleBlur('adresseCommerce')}
                                     error={touched.adresseCommerce && errors.adresseCommerce}
-                                    style={styles.input}
+                                    style={commonStyles.input}
                                     left={<TextInput.Icon icon="map-marker" />}
                                 />
                                 {touched.adresseCommerce && errors.adresseCommerce && (
@@ -135,6 +140,7 @@ const MerchantRegisterScreen = () => {
                                     </HelperText>
                                 )}
 
+                                {/* Email */}
                                 <TextInput
                                     label="Adresse Mail"
                                     mode="outlined"
@@ -144,7 +150,7 @@ const MerchantRegisterScreen = () => {
                                     autoCapitalize="none"
                                     keyboardType="email-address"
                                     error={touched.email && errors.email}
-                                    style={styles.input}
+                                    style={commonStyles.input}
                                     left={<TextInput.Icon icon="email" />}
                                 />
                                 {touched.email && errors.email && (
@@ -153,6 +159,7 @@ const MerchantRegisterScreen = () => {
                                     </HelperText>
                                 )}
 
+                                {/* Mot de passe */}
                                 <TextInput
                                     label="Mot de passe"
                                     mode="outlined"
@@ -161,7 +168,7 @@ const MerchantRegisterScreen = () => {
                                     onBlur={handleBlur('password')}
                                     secureTextEntry={secureText}
                                     error={touched.password && errors.password}
-                                    style={styles.input}
+                                    style={commonStyles.input}
                                     left={<TextInput.Icon icon="lock" />}
                                     right={
                                         <TextInput.Icon
@@ -176,6 +183,7 @@ const MerchantRegisterScreen = () => {
                                     </HelperText>
                                 )}
 
+                                {/* Confirmer mot de passe */}
                                 <TextInput
                                     label="Confirmer le Mot de passe"
                                     mode="outlined"
@@ -184,7 +192,7 @@ const MerchantRegisterScreen = () => {
                                     onBlur={handleBlur('confirmPassword')}
                                     secureTextEntry={secureConfirmText}
                                     error={touched.confirmPassword && errors.confirmPassword}
-                                    style={styles.input}
+                                    style={commonStyles.input}
                                     left={<TextInput.Icon icon="lock-check" />}
                                     right={
                                         <TextInput.Icon
@@ -199,6 +207,7 @@ const MerchantRegisterScreen = () => {
                                     </HelperText>
                                 )}
 
+                                {/* Accept Terms */}
                                 <View style={styles.checkboxContainer}>
                                     <Checkbox
                                         status={values.acceptTerms ? 'checked' : 'unchecked'}
@@ -216,13 +225,14 @@ const MerchantRegisterScreen = () => {
                                     </HelperText>
                                 )}
 
+                                {/* Boutons */}
                                 <Button
                                     mode="contained"
                                     onPress={handleSubmit}
                                     loading={loading}
                                     disabled={loading}
-                                    style={styles.button}
-                                    contentStyle={styles.buttonContent}
+                                    style={commonStyles.button}
+                                    contentStyle={commonStyles.buttonContent}
                                 >
                                     Inscription
                                 </Button>
@@ -230,16 +240,16 @@ const MerchantRegisterScreen = () => {
                                 <Button
                                     mode="text"
                                     onPress={() => navigation.navigate('ClientRegister')}
-                                    style={styles.switchButton}
-                                    labelStyle={styles.switchButtonLabel}
+                                    style={commonStyles.switchButton}
+                                    labelStyle={commonStyles.switchButtonLabel}
                                 >
                                     Vous êtes un client ?
                                 </Button>
 
-                                <View style={styles.footer}>
-                                    <Text style={styles.footerText}>Vous avez un compte ?</Text>
+                                <View style={commonStyles.footer}>
+                                    <Text style={commonStyles.footerText}>Vous avez un compte ?</Text>
                                     <Text
-                                        style={styles.footerLink}
+                                        style={commonStyles.footerLink}
                                         onPress={() => navigation.navigate('MerchantLogin')}
                                     >
                                         Connexion
@@ -256,84 +266,19 @@ const MerchantRegisterScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#4A90E2',
+        backgroundColor: colors.background, // spécifique à cet écran
     },
-    logoImage: {
-        width: 246,
-        height: 151,
-    },
-    scrollContent: {
-        flexGrow: 1,
-        justifyContent: 'center',
-        padding: 20,
-    },
-    logoContainer: {
-        alignItems: 'center',
-        marginBottom: 30,
-    },
-    logoPlaceholder: {
-        width: 246,
-        height: 151,
-        borderRadius: 20,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 15,
-    },
-    logoText: {
-        fontSize: 48,
-        fontWeight: 'bold',
-        color: '#4A90E2',
-    },
-    welcomeText: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 5,
-    },
-    subtitle: {
-        fontSize: 18,
-        color: '#fff',
-        opacity: 0.9,
-    },
-    formContainer: {
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        padding: 20,
-    },
-    input: {
-        marginBottom: 5,
-    },
-    button: {
-        marginTop: 20,
-        borderRadius: 25,
-    },
-    buttonContent: {
-        paddingVertical: 8,
-    },
-    switchButton: {
-        marginTop: 10,
-    },
-    switchButtonLabel: {
-        color: '#E91E63',
-        fontWeight: 'bold',
-    },
-    footer: {
+    checkboxContainer: {
         flexDirection: 'row',
-        justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 15,
-        gap: 5,
+        marginVertical: 10,
     },
-    footerText: {
+    checkboxText: {
+        marginLeft: 8,
         fontSize: 14,
-        color: '#666',
-    },
-    footerLink: {
-        fontSize: 14,
-        color: '#4A90E2',
-        fontWeight: 'bold',
+        color: colors.gray,
     },
 });
+
 export default MerchantRegisterScreen;
+

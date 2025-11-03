@@ -2,23 +2,23 @@
 import React, { useState } from 'react';
 import {
   View,
-  StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   Image,
+  StyleSheet,
 } from 'react-native';
 import {
   TextInput,
   Button,
   Text,
   Surface,
-  useTheme,
   HelperText,
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { commonStyles, colors } from './styles';
 
 // Schéma de validation
 const loginSchema = Yup.object().shape({
@@ -32,21 +32,14 @@ const loginSchema = Yup.object().shape({
 
 const ClientLoginScreen = () => {
   const navigation = useNavigation();
-  const theme = useTheme();
   const [loading, setLoading] = useState(false);
   const [secureText, setSecureText] = useState(true);
 
   const handleLogin = async (values) => {
     setLoading(true);
     try {
-      // TODO: Implémenter l'authentification avec l'API
       console.log('Login avec:', values);
-      // Simuler un délai d'API
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Navigation vers l'écran principal client après succès
-      // navigation.navigate('ClientHome');
-      
       alert('Connexion réussie !');
     } catch (error) {
       alert('Erreur de connexion. Veuillez réessayer.');
@@ -58,37 +51,31 @@ const ClientLoginScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[commonStyles.container, styles.container]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={commonStyles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
         {/* Logo */}
-        <View style={styles.logoContainer}>
-          <View style={styles.logoPlaceholder}>
-            <Image source={require('../../assets/icons/icon.png')} style={styles.logoImage} />
-          </View>
-          <Text style={styles.welcomeText}>Bienvenue</Text>
-          <Text style={styles.subtitle}>Connexion</Text>
+        <View style={commonStyles.logoContainer}>
+            <Image
+              source={require('../../assets/icons/icon.png')}
+              style={commonStyles.logoImage}
+            />
+          <Text style={commonStyles.welcomeText}>Bienvenue</Text>
+          <Text style={commonStyles.subtitle}>Connexion</Text>
         </View>
 
         {/* Formulaire */}
-        <Surface style={styles.formContainer} elevation={2}>
+        <Surface style={commonStyles.formContainer} elevation={2}>
           <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={loginSchema}
             onSubmit={handleLogin}
           >
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              values,
-              errors,
-              touched,
-            }) => (
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
               <View>
                 {/* Email */}
                 <TextInput
@@ -100,11 +87,11 @@ const ClientLoginScreen = () => {
                   autoCapitalize="none"
                   keyboardType="email-address"
                   error={touched.email && errors.email}
-                  style={styles.input}
+                  style={commonStyles.input}
                   left={<TextInput.Icon icon="email" />}
                 />
                 {touched.email && errors.email && (
-                  <HelperText type="error" visible={true}>
+                  <HelperText type="error" visible>
                     {errors.email}
                   </HelperText>
                 )}
@@ -118,7 +105,7 @@ const ClientLoginScreen = () => {
                   onBlur={handleBlur('password')}
                   secureTextEntry={secureText}
                   error={touched.password && errors.password}
-                  style={styles.input}
+                  style={commonStyles.input}
                   left={<TextInput.Icon icon="lock" />}
                   right={
                     <TextInput.Icon
@@ -128,7 +115,7 @@ const ClientLoginScreen = () => {
                   }
                 />
                 {touched.password && errors.password && (
-                  <HelperText type="error" visible={true}>
+                  <HelperText type="error" visible>
                     {errors.password}
                   </HelperText>
                 )}
@@ -139,8 +126,8 @@ const ClientLoginScreen = () => {
                   onPress={handleSubmit}
                   loading={loading}
                   disabled={loading}
-                  style={styles.button}
-                  contentStyle={styles.buttonContent}
+                  style={commonStyles.button}
+                  contentStyle={commonStyles.buttonContent}
                 >
                   Connexion
                 </Button>
@@ -149,27 +136,27 @@ const ClientLoginScreen = () => {
                 <Button
                   mode="text"
                   onPress={() => navigation.navigate('MerchantLogin')}
-                  style={styles.switchButton}
-                  labelStyle={styles.switchButtonLabel}
+                  style={commonStyles.switchButton}
+                  labelStyle={commonStyles.switchButtonLabel}
                 >
                   Vous êtes commerçant ?
                 </Button>
 
                 {/* Mot de passe oublié */}
-                <View style={styles.footer}>
-                  <Text style={styles.footerText}>Mot de passe oublié ?</Text>
-                  <Text style={styles.footerLink} onPress={() => {}}>
+                <View style={commonStyles.footer}>
+                  <Text style={commonStyles.footerText}>Mot de passe oublié ?</Text>
+                  <Text style={commonStyles.footerLink} onPress={() => { }}>
                     Réinitialiser
                   </Text>
                 </View>
 
                 {/* Lien inscription */}
-                <View style={styles.footer}>
-                  <Text style={styles.footerText}>
+                <View style={commonStyles.footer}>
+                  <Text style={commonStyles.footerText}>
                     Vous n'avez pas de compte ?
                   </Text>
                   <Text
-                    style={styles.footerLink}
+                    style={commonStyles.footerLink}
                     onPress={() => navigation.navigate('ClientRegister')}
                   >
                     Inscription
@@ -186,84 +173,22 @@ const ClientLoginScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#4A90E2',
+    backgroundColor: colors.background, // spécifique à cet écran
   },
-  logoImage: {
-    width: 246,
-    height: 151,
+  userType: {
+    fontSize: 16,
+    color: colors.white,
+    marginTop: 5,
   },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  logoPlaceholder: {
-    width: 246,
-    height: 151,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  logoText: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#4A90E2',
-  },
-  welcomeText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#fff',
-    opacity: 0.9,
-  },
-  formContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 20,
-  },
-  input: {
-    marginBottom: 5,
-  },
-  button: {
-    marginTop: 20,
-    borderRadius: 25,
-  },
-  buttonContent: {
-    paddingVertical: 8,
-  },
-  switchButton: {
-    marginTop: 10,
-  },
-  switchButtonLabel: {
-    color: '#E91E63',
-    fontWeight: 'bold',
-  },
-  footer: {
+  checkboxContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 15,
-    gap: 5,
+    marginVertical: 10,
   },
-  footerText: {
+  checkboxText: {
+    marginLeft: 8,
     fontSize: 14,
-    color: '#666',
-  },
-  footerLink: {
-    fontSize: 14,
-    color: '#4A90E2',
-    fontWeight: 'bold',
+    color: colors.gray,
   },
 });
 
