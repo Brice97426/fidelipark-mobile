@@ -24,7 +24,7 @@ export const commonStyles = StyleSheet.create({
     },
     logoContainer: {
         alignItems: 'center',
-        marginBottom: 30,
+        marginBottom: 15,
     },
     logoPlaceholder: {
         width: 246,
