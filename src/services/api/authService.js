@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 // Configuration de l'URL de l'API
-const API_URL = process.env.API_URL || 'http://192.168.50.207:3000/api';
+const API_URL = process.env.API_URL || 'http://192.168.1.34:3000/api';
 
 // Instance axios configurée
 const api = axios.create({
