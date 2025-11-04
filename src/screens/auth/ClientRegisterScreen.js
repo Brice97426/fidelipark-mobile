@@ -7,6 +7,7 @@ import {
   Platform,
   Image,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import {
   TextInput,
@@ -15,11 +16,13 @@ import {
   Surface,
   Checkbox,
   HelperText,
+  Snackbar,
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { commonStyles, colors } from './styles';
+import { registerClient } from '../../services/api/authService';
 
 // Schéma de validation
 const registerSchema = Yup.object().shape({
@@ -32,6 +35,9 @@ const registerSchema = Yup.object().shape({
   email: Yup.string()
     .email('Adresse mail invalide')
     .required('Adresse mail requise'),
+  nb_tel: Yup.string()
+    .matches(/^[0-9]{10}$/, 'Numéro de téléphone invalide (10 chiffres)')
+    .nullable(),
   password: Yup.string()
     .min(6, 'Le mot de passe doit contenir au moins 6 caractères')
     .required('Mot de passe requis'),
@@ -48,17 +54,59 @@ const ClientRegisterScreen = () => {
   const [loading, setLoading] = useState(false);
   const [secureText, setSecureText] = useState(true);
   const [secureConfirmText, setSecureConfirmText] = useState(true);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  const showMessage = (message) => {
+    setSnackbarMessage(message);
+    setSnackbarVisible(true);
+  };
 
   const handleRegister = async (values) => {
     setLoading(true);
     try {
-      console.log('Inscription avec:', values);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');
-      navigation.navigate('ClientLogin');
+      console.log('🔄 Tentative d\'inscription CLIENT...', values.email);
+
+      const result = await registerClient({
+        nom: values.nom,
+        prenom: values.prenom,
+        email: values.email,
+        password: values.password,
+        nb_tel: values.nb_tel,
+      });
+
+      if (result.success) {
+        console.log('✅ Inscription réussie!', result.data.user);
+
+        Alert.alert(
+          '✅ Inscription réussie !',
+          `Bienvenue ${values.prenom} ${values.nom} !\n\nVous pouvez maintenant vous connecter avec votre compte.`,
+          [
+            {
+              text: 'Se connecter',
+              onPress: () => navigation.navigate('ClientLogin'),
+            },
+          ]
+        );
+      } else {
+        console.log('❌ Erreur d\'inscription:', result.error);
+
+        let errorMessage = result.error || 'Erreur lors de l\'inscription.';
+
+        // Afficher les détails des erreurs de validation si disponibles
+        if (result.details && Array.isArray(result.details)) {
+          const validationErrors = result.details.map(err => err.msg).join('\n');
+          errorMessage += '\n\n' + validationErrors;
+        }
+
+        Alert.alert('❌ Erreur d\'inscription', errorMessage);
+      }
     } catch (error) {
-      alert('Erreur lors de l\'inscription. Veuillez réessayer.');
-      console.error(error);
+      console.error('❌ Erreur inattendue:', error);
+      Alert.alert(
+        '❌ Erreur',
+        'Impossible de se connecter au serveur.\n\nVérifiez que:\n1. Le backend est démarré (npm run dev)\n2. L\'URL API est correcte dans .env'
+      );
     } finally {
       setLoading(false);
     }
@@ -79,7 +127,7 @@ const ClientRegisterScreen = () => {
             <Image source={require('../../assets/icons/icon.png')} style={commonStyles.logoImage} />
           </View>
           <Text style={commonStyles.welcomeText}>Bienvenue</Text>
-          <Text style={commonStyles.subtitle}>Inscription</Text>
+          <Text style={commonStyles.subtitle}>Inscription Client</Text>
         </View>
 
         {/* Formulaire */}
@@ -89,6 +137,7 @@ const ClientRegisterScreen = () => {
               nom: '',
               prenom: '',
               email: '',
+              nb_tel: '',
               password: '',
               confirmPassword: '',
               acceptTerms: false,
@@ -117,6 +166,7 @@ const ClientRegisterScreen = () => {
                       onBlur={handleBlur('nom')}
                       error={touched.nom && errors.nom}
                       left={<TextInput.Icon icon="account" />}
+                      disabled={loading}
                     />
                     {touched.nom && errors.nom && (
                       <HelperText type="error" visible={true}>
@@ -134,6 +184,7 @@ const ClientRegisterScreen = () => {
                       onBlur={handleBlur('prenom')}
                       error={touched.prenom && errors.prenom}
                       left={<TextInput.Icon icon="account" />}
+                      disabled={loading}
                     />
                     {touched.prenom && errors.prenom && (
                       <HelperText type="error" visible={true}>
@@ -155,10 +206,31 @@ const ClientRegisterScreen = () => {
                   error={touched.email && errors.email}
                   style={commonStyles.input}
                   left={<TextInput.Icon icon="email" />}
+                  disabled={loading}
                 />
                 {touched.email && errors.email && (
                   <HelperText type="error" visible={true}>
                     {errors.email}
+                  </HelperText>
+                )}
+
+                {/* Numéro de téléphone */}
+                <TextInput
+                  label="Numéro de téléphone (optionnel)"
+                  mode="outlined"
+                  value={values.nb_tel}
+                  onChangeText={handleChange('nb_tel')}
+                  onBlur={handleBlur('nb_tel')}
+                  keyboardType="phone-pad"
+                  error={touched.nb_tel && errors.nb_tel}
+                  style={commonStyles.input}
+                  left={<TextInput.Icon icon="phone" />}
+                  placeholder="0692123456"
+                  disabled={loading}
+                />
+                {touched.nb_tel && errors.nb_tel && (
+                  <HelperText type="error" visible={true}>
+                    {errors.nb_tel}
                   </HelperText>
                 )}
 
@@ -179,6 +251,7 @@ const ClientRegisterScreen = () => {
                       onPress={() => setSecureText(!secureText)}
                     />
                   }
+                  disabled={loading}
                 />
                 {touched.password && errors.password && (
                   <HelperText type="error" visible={true}>
@@ -203,6 +276,7 @@ const ClientRegisterScreen = () => {
                       onPress={() => setSecureConfirmText(!secureConfirmText)}
                     />
                   }
+                  disabled={loading}
                 />
                 {touched.confirmPassword && errors.confirmPassword && (
                   <HelperText type="error" visible={true}>
@@ -215,11 +289,12 @@ const ClientRegisterScreen = () => {
                   <Checkbox
                     status={values.acceptTerms ? 'checked' : 'unchecked'}
                     onPress={() =>
-                      setFieldValue('acceptTerms', !values.acceptTerms)
+                      !loading && setFieldValue('acceptTerms', !values.acceptTerms)
                     }
+                    disabled={loading}
                   />
                   <Text style={styles.checkboxText}>
-                    Veuillez accepter les conditions générales
+                    J'accepte les conditions générales d'utilisation et la politique de confidentialité RGPD
                   </Text>
                 </View>
                 {touched.acceptTerms && errors.acceptTerms && (
@@ -236,15 +311,17 @@ const ClientRegisterScreen = () => {
                   disabled={loading}
                   style={commonStyles.button}
                   contentStyle={commonStyles.buttonContent}
+                  icon="account-plus"
                 >
-                  Inscription
+                  {loading ? 'Inscription en cours...' : 'S\'inscrire'}
                 </Button>
 
                 <Button
                   mode="text"
-                  onPress={() => navigation.navigate('MerchantRegister')}
+                  onPress={() => !loading && navigation.navigate('MerchantRegister')}
                   style={commonStyles.switchButton}
                   labelStyle={commonStyles.switchButtonLabel}
+                  disabled={loading}
                 >
                   Vous êtes commerçant ?
                 </Button>
@@ -252,8 +329,8 @@ const ClientRegisterScreen = () => {
                 <View style={commonStyles.footer}>
                   <Text style={commonStyles.footerText}>Vous avez un compte ?</Text>
                   <Text
-                    style={commonStyles.footerLink}
-                    onPress={() => navigation.navigate('ClientLogin')}
+                    style={[commonStyles.footerLink, loading && styles.linkDisabled]}
+                    onPress={() => !loading && navigation.navigate('ClientLogin')}
                   >
                     Connexion
                   </Text>
@@ -263,13 +340,23 @@ const ClientRegisterScreen = () => {
           </Formik>
         </Surface>
       </ScrollView>
+
+      {/* Snackbar pour les messages */}
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={styles.snackbar}
+      >
+        {snackbarMessage}
+      </Snackbar>
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.background, // spécifique à cet écran
+    backgroundColor: colors.background,
   },
   row: {
     flexDirection: 'row',
@@ -287,7 +374,13 @@ const styles = StyleSheet.create({
   checkboxText: {
     marginLeft: 8,
     fontSize: 14,
-    color: colors.gray,
+    color: colors.black,
+  },
+  linkDisabled: {
+    opacity: 0.5,
+  },
+  snackbar: {
+    backgroundColor: '#4CAF50',
   },
 });
 
