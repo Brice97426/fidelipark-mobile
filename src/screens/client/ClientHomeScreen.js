@@ -76,7 +76,7 @@ const ClientHomeScreen = () => {
             <Surface style={styles.merchantCard} elevation={2}>
                 <View style={styles.merchantImageContainer}>
                     <Image
-                        source={require('../../assets/images/store-placeholder.png')}
+                        source={require('../../assets/images/Ellipse9.png')}
                         style={styles.merchantImage}
                     />
                     <TouchableOpacity style={styles.favoriteButton}>
@@ -159,7 +159,7 @@ const ClientHomeScreen = () => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Image
-                    source={require('../../assets/icons/icon.png')}
+                    source={require('../../assets/images/Ellipse9.png')}
                     style={styles.logo}
                 />
                 <Text style={styles.headerTitle}>FidéliPark</Text>
@@ -260,7 +260,7 @@ const ClientHomeScreen = () => {
                                         elevation={4}
                                     >
                                         <Image
-                                            source={require('../../assets/images/store-placeholder.png')}
+                                            source={require('../../assets/images/Ellipse9.png')}
                                             style={styles.mapCardImage}
                                         />
                                         <View style={styles.mapCardInfo}>

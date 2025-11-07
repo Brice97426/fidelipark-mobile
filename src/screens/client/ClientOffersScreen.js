@@ -75,7 +75,7 @@ const ClientOffersScreen = () => {
                 <Surface style={[styles.offerCard, !canUse && styles.offerCardDisabled]} elevation={2}>
                     <View style={styles.merchantBadge}>
                         <Image
-                            source={require('../../assets/images/store-placeholder.png')}
+                            source={require('../../assets/images/Ellipse9.png')}
                             style={styles.merchantLogo}
                         />
                         <Text style={styles.merchantName} numberOfLines={1}>

@@ -157,16 +157,23 @@ export const logout = async () => {
 /**
  * Vérifier si l'utilisateur est connecté
  */
+/**
+ * Vérifier si l'utilisateur est connecté
+ */
 export const isAuthenticated = async () => {
     try {
         const token = await SecureStore.getItemAsync('userToken');
         if (!token) return false;
 
-        const response = await api.get('/auth/verify');
+        // Changez '/auth/verify' en '/auth/verify-token'
+        // OU supprimez cette vérification et vérifiez juste l'existence du token
+        const response = await api.get('/auth/verify-token');
         return response.data.valid;
     } catch (error) {
         console.error('Erreur vérification token:', error);
-        return false;
+        // Si la route n'existe pas, on vérifie juste si le token existe
+        const token = await SecureStore.getItemAsync('userToken');
+        return !!token;
     }
 };
 

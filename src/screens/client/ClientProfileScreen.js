@@ -1,10 +1,9 @@
-// src/screens/client/ClientProfileScreen.js
+// src/screens/client/ClientProfileScreen.js - Avec déconnexion
 import React from 'react';
 import {
     View,
     StyleSheet,
     ScrollView,
-    TouchableOpacity,
     Alert,
 } from 'react-native';
 import {
@@ -16,11 +15,13 @@ import {
     Button,
 } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { logout } from '../../services/api/authService';
+import { useAuth } from '../../contexts/AuthContext';
 
-const ClientProfileScreen = ({ navigation }) => {
-    // TODO: Récupérer les données utilisateur depuis le contexte
-    const user = {
+const ClientProfileScreen = () => {
+    const { user, logout } = useAuth(); // ✅ Utiliser le contexte
+
+    // Utiliser les vraies données du contexte
+    const userData = user || {
         nom: 'Dupont',
         prenom: 'Jean',
         email: 'jean.dupont@email.com',
@@ -38,9 +39,8 @@ const ClientProfileScreen = ({ navigation }) => {
                     text: 'Déconnexion',
                     style: 'destructive',
                     onPress: async () => {
-                        await logout();
-                        // TODO: Navigation vers l'écran de connexion
-                        Alert.alert('Info', 'Navigation vers connexion à implémenter');
+                        await logout(); // ✅ Déconnexion via le contexte
+                        // La redirection vers login sera automatique via App.js
                     },
                 },
             ]
@@ -53,20 +53,20 @@ const ClientProfileScreen = ({ navigation }) => {
             <View style={styles.header}>
                 <Avatar.Text
                     size={80}
-                    label={`${user.prenom[0]}${user.nom[0]}`}
+                    label={`${userData.prenom[0]}${userData.nom[0]}`}
                     style={styles.avatar}
                     labelStyle={styles.avatarLabel}
                 />
                 <Text style={styles.userName}>
-                    {user.prenom} {user.nom}
+                    {userData.prenom} {userData.nom}
                 </Text>
-                <Text style={styles.userEmail}>{user.email}</Text>
+                <Text style={styles.userEmail}>{userData.email}</Text>
 
                 {/* Points */}
                 <Surface style={styles.pointsCard} elevation={2}>
                     <MaterialCommunityIcons name="star-circle" size={40} color="#FFC107" />
                     <View style={styles.pointsInfo}>
-                        <Text style={styles.pointsValue}>{user.points}</Text>
+                        <Text style={styles.pointsValue}>{userData.points}</Text>
                         <Text style={styles.pointsLabel}>points fidélité</Text>
                     </View>
                 </Surface>

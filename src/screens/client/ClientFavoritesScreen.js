@@ -25,7 +25,7 @@ const ClientFavoritesScreen = () => {
         >
             <Surface style={styles.favoriteCard} elevation={2}>
                 <Image
-                    source={require('../../assets/images/store-placeholder.png')}
+                    source={require('../../assets/images/Ellipse9.png')}
                     style={styles.favoriteImage}
                 />
 

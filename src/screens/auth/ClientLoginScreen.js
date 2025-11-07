@@ -1,4 +1,4 @@
-// src/screens/auth/ClientLoginScreen.js
+// src/screens/auth/ClientLoginScreen.js - Version avec redirection
 import React, { useState } from 'react';
 import {
   View,
@@ -22,6 +22,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { commonStyles, colors } from './styles';
 import { login } from '../../services/api/authService';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Schéma de validation
 const loginSchema = Yup.object().shape({
@@ -35,6 +36,7 @@ const loginSchema = Yup.object().shape({
 
 const ClientLoginScreen = () => {
   const navigation = useNavigation();
+  const { login: authLogin } = useAuth(); // ✅ Utiliser le contexte
   const [loading, setLoading] = useState(false);
   const [secureText, setSecureText] = useState(true);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -55,19 +57,13 @@ const ClientLoginScreen = () => {
       if (result.success) {
         console.log('✅ Connexion réussie!', result.data.user);
 
+        // ✅ Mettre à jour le contexte d'authentification
+        authLogin(result.data.user);
+
         showMessage(`Bienvenue ${result.data.user.prenom} ${result.data.user.nom} !`);
 
-        // Navigation vers l'écran principal client après 1 seconde
-        setTimeout(() => {
-          // TODO: Décommenter quand l'écran ClientHome sera créé
-          // navigation.navigate('ClientHome');
-          console.log('Navigation vers ClientHome (à implémenter)');
-          Alert.alert(
-            '✅ Connexion réussie !',
-            `Bienvenue ${result.data.user.prenom} ${result.data.user.nom}\n\nPoints: ${result.data.user.points}\n\n(Navigation vers accueil à implémenter)`,
-            [{ text: 'OK' }]
-          );
-        }, 1000);
+        // ✅ La redirection sera automatique via App.js qui détecte le changement de user
+        // Pas besoin de navigation.navigate() ici !
 
       } else {
         console.log('❌ Erreur de connexion:', result.error);

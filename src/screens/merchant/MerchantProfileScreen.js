@@ -64,9 +64,8 @@ const MerchantProfileScreen = ({ navigation }) => {
                     text: 'Déconnexion',
                     style: 'destructive',
                     onPress: async () => {
-                        await logout();
-                        // TODO: Navigation vers l'écran de connexion
-                        Alert.alert('Info', 'Navigation vers connexion à implémenter');
+                        await logout(); // ✅ Déconnexion via le contexte
+                        // La redirection vers login sera automatique via App.js
                     },
                 },
             ]

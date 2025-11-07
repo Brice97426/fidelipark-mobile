@@ -1,4 +1,4 @@
-// src/screens/auth/MerchantLoginScreen.js
+// src/screens/auth/MerchantLoginScreen.js - Version avec redirection
 import React, { useState } from 'react';
 import {
     View,
@@ -22,6 +22,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { commonStyles, colors } from './styles';
 import { login } from '../../services/api/authService';
+import { useAuth } from '../../contexts/AuthContext';
 
 const loginSchema = Yup.object().shape({
     email: Yup.string()
@@ -34,6 +35,7 @@ const loginSchema = Yup.object().shape({
 
 const MerchantLoginScreen = () => {
     const navigation = useNavigation();
+    const { login: authLogin } = useAuth(); // ✅ Utiliser le contexte
     const [loading, setLoading] = useState(false);
     const [secureText, setSecureText] = useState(true);
     const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -54,19 +56,12 @@ const MerchantLoginScreen = () => {
             if (result.success) {
                 console.log('✅ Connexion commerçant réussie!', result.data.user);
 
+                // ✅ Mettre à jour le contexte d'authentification
+                authLogin(result.data.user);
+
                 showMessage(`Bienvenue ${result.data.user.nom_magasin} !`);
 
-                // Navigation vers l'écran principal commerçant après 1 seconde
-                setTimeout(() => {
-                    // TODO: Décommenter quand l'écran MerchantHome sera créé
-                    // navigation.navigate('MerchantHome');
-                    console.log('Navigation vers MerchantHome (à implémenter)');
-                    Alert.alert(
-                        '✅ Connexion réussie !',
-                        `Bienvenue ${result.data.user.nom_magasin}\n\n(Navigation vers accueil commerçant à implémenter)`,
-                        [{ text: 'OK' }]
-                    );
-                }, 1000);
+                // ✅ La redirection sera automatique via App.js
 
             } else {
                 console.log('❌ Erreur de connexion:', result.error);

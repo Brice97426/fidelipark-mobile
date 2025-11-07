@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { Text, Button, Surface, ActivityIndicator } from 'react-native-paper';
-import { CameraView, Camera } from 'expo-camera/next';
+import { CameraView, Camera } from 'expo-camera';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const MerchantScanScreen = () => {
