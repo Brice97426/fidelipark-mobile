@@ -4,7 +4,7 @@ Application mobile de fidélisation pour le centre-ville de Saint-Pierre, La Ré
 
 ## 🎯 Objectif du Projet
 
-Dynamiser le commerce local en proposant un système de fidélité moderne basé sur le stationnement payant.
+Dynamiser le commerce local en proposant un système de fidélité moderne basé sur le stationnement payant. Via PayByPhone
 
 ## 👥 Équipe
 
